@@ -1,9 +1,9 @@
-
+import Task from "./components/Task";
 
 export default function Home() {
   return (
     <div>
-      Hello World!
+      <Task/>
     </div>
   );
 }
