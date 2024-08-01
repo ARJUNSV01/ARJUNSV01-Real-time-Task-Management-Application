@@ -11,7 +11,7 @@ const Task = () => {
       <Container maxWidth="md">
         <Box my={2}>
           <AddTask setUpdated={setUpdated} />
-          <TaskContainer updated={updated} />
+          <TaskContainer updated={updated} setUpdated={setUpdated}/>
         </Box>
       </Container>
     </div>
