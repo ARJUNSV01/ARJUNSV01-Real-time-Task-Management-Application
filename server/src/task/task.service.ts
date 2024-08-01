@@ -3,12 +3,14 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Task } from './task.model';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { KafkaService } from 'src/kafka/kafka.service';
 
 @Injectable()
 export class TaskService {
   constructor(
     @InjectModel(Task)
     private taskModel: typeof Task,
+    private readonly kafkaService: KafkaService,
   ) {}
 
   async findAll(): Promise<Task[]> {
@@ -25,6 +27,9 @@ export class TaskService {
 
   async create(createTaskDto: CreateTaskDto): Promise<Task> {
     const task = await this.taskModel.create(createTaskDto);
+    await this.kafkaService.sendMessage('task-events', [
+        { value: JSON.stringify({ event: 'created', task }) },
+      ]);
     return task;
   }
 
@@ -35,6 +40,9 @@ export class TaskService {
         throw new NotFoundException('Task not found');
       }
       await task.update(updateTaskDto);
+      await this.kafkaService.sendMessage('task-events', [
+        { value: JSON.stringify({ event: 'updated', task }) },
+      ]);
       return task;
     } catch (error) {
       throw error;
@@ -48,6 +56,9 @@ export class TaskService {
         throw new NotFoundException('Task not found');
       }
       await task.destroy();
+      await this.kafkaService.sendMessage('task-events', [
+        { value: JSON.stringify({ event: 'deleted', id }) },
+      ]);
     } catch (error) {
       throw error;
     }
