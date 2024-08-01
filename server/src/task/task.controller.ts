@@ -16,6 +16,7 @@ import {
     constructor(private readonly taskService: TaskService) {}
     @Get()
     async findAll(): Promise<Task[]> {
+        console.log('get all tasks')
       return this.taskService.findAll();
     }
     @Get(':id')
