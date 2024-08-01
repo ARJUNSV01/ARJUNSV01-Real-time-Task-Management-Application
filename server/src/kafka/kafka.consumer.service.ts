@@ -1,12 +1,12 @@
-import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Kafka, Consumer } from 'kafkajs';
+import { RedisService } from '../redis/redis.service'; // Import RedisService
 
 @Injectable()
 export class KafkaConsumerService implements OnModuleInit {
   private consumer: Consumer;
-  private readonly logger = new Logger(KafkaConsumerService.name);
 
-  constructor() {
+  constructor(private readonly redisService: RedisService) {
     const kafka = new Kafka({
       brokers: ['localhost:9092'],
     });
@@ -21,13 +21,13 @@ export class KafkaConsumerService implements OnModuleInit {
     this.consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
         const { event, task, id } = JSON.parse(message.value.toString());
-        this.logger.log(
-          `Received message: ${JSON.stringify({ event, task, id })}`,
-        );
+
+        const redisClient = this.redisService.getClient();
+
         if (event === 'created' || event === 'updated') {
-          this.logger.log(`Task ${event}:`, task);
+          await redisClient.set(`task:${task.id}`, JSON.stringify(task));
         } else if (event === 'deleted') {
-          this.logger.log(`Task deleted with id: ${id}`);
+          await redisClient.del(`task:${id}`);
         }
       },
     });
