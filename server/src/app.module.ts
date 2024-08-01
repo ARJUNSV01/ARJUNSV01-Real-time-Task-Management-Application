@@ -8,7 +8,7 @@ import { KafkaModule } from './kafka/kafka.module';
     SequelizeModule.forRoot({
       dialect: 'postgres',
       host: 'localhost',
-      port: 5432,
+      port: 5433,
       username: 'postgres',
       password: '12345678',
       database: 'Task_Management',
