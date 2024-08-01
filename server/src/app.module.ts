@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { TaskModule } from './task/task.module';
 import { KafkaModule } from './kafka/kafka.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { KafkaModule } from './kafka/kafka.module';
     }),
     TaskModule,
     KafkaModule,
+    RedisModule,
   ],
 })
 export class AppModule {}
