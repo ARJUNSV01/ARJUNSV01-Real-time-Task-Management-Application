@@ -1,12 +1,13 @@
 "use client";
 import React, { useState } from "react";
 import { Grid, Button, TextField } from "@mui/material";
+import { Socket } from "socket.io-client";
 
 interface AddTaskProps {
- setUpdated: (updater: (prev: boolean) => boolean) => void;
+  socket: Socket;
 }
 
-const AddTask: React.FC<AddTaskProps> = ({ setUpdated }) => {
+const AddTask: React.FC<AddTaskProps> = ({ socket }) => {
   const [newTask, setNewTask] = useState("");
 
   const handleAddClick = async () => {
@@ -23,7 +24,7 @@ const AddTask: React.FC<AddTaskProps> = ({ setUpdated }) => {
         if (response.ok) {
           const addedTask = await response.json();
           console.log("Task added:", addedTask);
-          setUpdated((prev: boolean) => !prev);
+          socket.emit('createTask')
           setNewTask("");
         } else {
           console.error("Failed to add task");
