@@ -1,17 +1,21 @@
 "use client"
 import { Box, Container } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
 import TaskContainer from "./TaskContainer";
 import AddTask from "./AddTask";
+import {io, Socket } from "socket.io-client"; 
+
+const socket: Socket = io("http://localhost:4000");
+
+console.log(socket)
 
 const Task = () => {
-    const[updated,setUpdated]=useState<boolean>(false);
   return (
     <div>
       <Container maxWidth="md">
         <Box my={2}>
-          <AddTask setUpdated={setUpdated} />
-          <TaskContainer updated={updated} setUpdated={setUpdated}/>
+          <AddTask socket={socket} />
+          <TaskContainer socket={socket}/>
         </Box>
       </Container>
     </div>

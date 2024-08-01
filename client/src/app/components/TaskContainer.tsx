@@ -10,6 +10,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Link from "next/link";
+import { Socket } from "socket.io-client";
 
 interface Task {
   id: string;
@@ -21,14 +22,10 @@ type TaskStatus = "TODO" | "IN_PROGRESS" | "DONE";
 const statuses: TaskStatus[] = ["TODO", "IN_PROGRESS", "DONE"];
 
 interface TaskContainerProps {
-  updated: boolean;
-  setUpdated: (updater: (prev: boolean) => boolean) => void;
+  socket: Socket;
 }
 
-const TaskContainer: React.FC<TaskContainerProps> = ({
-  updated,
-  setUpdated,
-}) => {
+const TaskContainer: React.FC<TaskContainerProps> = ({ socket }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,7 +45,13 @@ const TaskContainer: React.FC<TaskContainerProps> = ({
     };
 
     fetchTasks();
-  }, [updated]);
+  }, []);
+
+  useEffect(() => {
+    socket.on("tasks", (data) => {
+      setTasks(data);
+    });
+  }, [socket]);
 
   const getTasksByStatus = (status: TaskStatus) => {
     return tasks.filter((task) => task.status === status);
@@ -79,7 +82,7 @@ const TaskContainer: React.FC<TaskContainerProps> = ({
         }
       );
 
-      setUpdated((prev) => !prev);
+      socket.emit("updateTask");
 
       if (!response.ok) {
         throw new Error("Failed to update task");
@@ -99,9 +102,7 @@ const TaskContainer: React.FC<TaskContainerProps> = ({
         throw new Error("Failed to delete");
       }
 
-      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
-
-      setUpdated((prev) => !prev);
+      socket.emit("deleteTask");
     } catch (error) {
       console.error(error);
     }
