@@ -14,7 +14,7 @@ const AddTask: React.FC<AddTaskProps> = ({ socket }) => {
   const handleAddClick = async () => {
     if (newTaskTitle.trim() && newTaskDescription.trim()) {
       try {
-        const response = await fetch("http://localhost:3000/tasks", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_TASK_SERVICE_URL}/tasks`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
