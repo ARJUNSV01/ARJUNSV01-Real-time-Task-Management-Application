@@ -23,7 +23,7 @@ const TaskDetailPage: React.FC = () => {
     const fetchTask = async () => {
       if (typeof id !== "string") return;
       try {
-        const response = await fetch(`http://localhost:4000/tasks/${id}`);
+        const response = await fetch(`http://localhost:3000/tasks/${id}`);
         if (!response.ok) {
           throw new Error("Failed to fetch task");
         }
