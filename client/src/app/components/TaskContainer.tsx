@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Container, Grid, IconButton, Paper, Typography } from "@mui/material";
+import { Box, Container, Grid, IconButton, Paper, Typography } from "@mui/material";
 import {
   DragDropContext,
   Droppable,
@@ -16,6 +16,7 @@ interface Task {
   id: string;
   title: string;
   status: TaskStatus;
+  description: string
 }
 
 type TaskStatus = "TODO" | "IN_PROGRESS" | "DONE";
@@ -162,9 +163,19 @@ const TaskContainer: React.FC<TaskContainerProps> = ({ socket }) => {
                                   justifyContent: "space-between",
                                 }}
                               >
+                                <Box>
                                 <Typography variant="subtitle1">
                                   {task.title}
                                 </Typography>
+                                <Typography
+                                  variant="body2"
+                                  color="textSecondary"
+                                >
+                                  {task.description}{" "}
+ 
+                                </Typography>
+                                </Box>
+                                <Box>
                                 <IconButton
                                   onClick={() => handleDeleteTask(task.id)}
                                   color="secondary"
@@ -176,6 +187,7 @@ const TaskContainer: React.FC<TaskContainerProps> = ({ socket }) => {
                                     <VisibilityIcon />
                                   </IconButton>
                                 </Link>
+                                </Box>
                               </Paper>
                             </div>
                           )}
