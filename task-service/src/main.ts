@@ -17,6 +17,7 @@ async function bootstrap() {
         groupId: 'task-consumer-group',
       },
     },
+    
   });
 
   await app.startAllMicroservices();

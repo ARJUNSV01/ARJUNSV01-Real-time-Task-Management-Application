@@ -33,7 +33,7 @@ const TaskContainer: React.FC<TaskContainerProps> = ({ socket }) => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch("http://localhost:3000/tasks");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_TASK_SERVICE_URL}/tasks`);
         if (!response.ok) {
           throw new Error("Failed to fetch");
         }
@@ -73,7 +73,7 @@ const TaskContainer: React.FC<TaskContainerProps> = ({ socket }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/tasks/${draggableId}`,
+        `${process.env.NEXT_PUBLIC_TASK_SERVICE_URL}/tasks/${draggableId}`,
         {
           method: "PUT",
           headers: {
@@ -95,7 +95,7 @@ const TaskContainer: React.FC<TaskContainerProps> = ({ socket }) => {
 
   const handleDeleteTask = async (taskId: string) => {
     try {
-      const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_TASK_SERVICE_URL}/tasks/${taskId}`, {
         method: "DELETE",
       });
 
