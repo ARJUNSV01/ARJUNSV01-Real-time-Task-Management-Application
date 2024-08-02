@@ -5,7 +5,7 @@ import TaskContainer from "./TaskContainer";
 import AddTask from "./AddTask";
 import {io, Socket } from "socket.io-client"; 
 
-const socket: Socket = io("http://localhost:4000");
+const socket: Socket = io("http://localhost:3000");
 
 console.log(socket)
 
