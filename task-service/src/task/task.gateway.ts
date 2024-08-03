@@ -15,7 +15,7 @@ import { TaskService } from './task.service';
 @Injectable()
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:5000',
+    origin: process.env.NEXT_APP_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
   },
 })

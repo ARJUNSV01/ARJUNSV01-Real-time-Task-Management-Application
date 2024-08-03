@@ -22,16 +22,16 @@ const TaskDetailPage: React.FC = () => {
   useEffect(() => {
     const fetchTask = async () => {
       if (typeof id !== "string") return;
-      try {
-        const response = await fetch(`http://localhost:3000/tasks/${id}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch task");
+        try {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_TASK_SERVICE_URL}/tasks/${id}`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch task");
+          }
+          const taskData: Task = await response.json();
+          setTask(taskData);
+        } catch (error) {
+          setError("Error fetching task details");
         }
-        const taskData: Task = await response.json();
-        setTask(taskData);
-      } catch (error) {
-        setError("Error fetching task details");
-      }
     };
 
     fetchTask();

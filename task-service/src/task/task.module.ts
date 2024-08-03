@@ -17,7 +17,7 @@ import { TaskGateway } from './task.gateway';
         transport: Transport.KAFKA,
         options: {
           client: {
-            brokers: ['localhost:9092'],
+            brokers: [process.env.KAFKA_BROKER],
           },
           consumer: {
             groupId: 'task-consumer-group',
