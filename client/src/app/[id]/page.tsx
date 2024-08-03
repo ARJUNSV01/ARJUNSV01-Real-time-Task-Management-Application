@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Container, Paper, Typography, Button } from "@mui/material";
 import Link from "next/link";
+import { getTaskById } from "../api/task";
 
 interface Task {
   id: string;
@@ -23,11 +24,7 @@ const TaskDetailPage: React.FC = () => {
     const fetchTask = async () => {
       if (typeof id !== "string") return;
         try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_TASK_SERVICE_URL}/tasks/${id}`);
-          if (!response.ok) {
-            throw new Error("Failed to fetch task");
-          }
-          const taskData: Task = await response.json();
+          const taskData = await getTaskById(id);
           setTask(taskData);
         } catch (error) {
           setError("Error fetching task details");

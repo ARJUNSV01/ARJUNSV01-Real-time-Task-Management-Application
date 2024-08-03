@@ -65,7 +65,7 @@ services:
       - DB_USERNAME=postgres
       - DB_PASSWORD=12345678
       - REDIS_URL=http://redis-service:3002
-      - NEXT_APP_URL=http://frontend:5000
+      - NEXT_APP_URL=http://localhost:5000
       - KAFKA_BROKER=kafka:9092
     networks:
       - task-network

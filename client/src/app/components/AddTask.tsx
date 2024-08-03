@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Grid, Button, TextField } from "@mui/material";
 import { Socket } from "socket.io-client";
+import { createTask } from "../api/task";
 
 interface AddTaskProps {
   socket: Socket;
@@ -14,28 +15,12 @@ const AddTask: React.FC<AddTaskProps> = ({ socket }) => {
   const handleAddClick = async () => {
     if (newTaskTitle.trim() && newTaskDescription.trim()) {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_TASK_SERVICE_URL}/tasks`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            title: newTaskTitle.trim(),
-            description: newTaskDescription.trim(),
-          }),
-        });
-
-        if (response.ok) {
-          const addedTask = await response.json();
-          console.log("Task added:", addedTask);
-          socket.emit('createTask');
-          setNewTaskTitle("");
-          setNewTaskDescription("");
-        } else {
-          console.error("Failed to add task");
-        }
+        const response = await createTask(newTaskTitle, newTaskDescription);
+        socket.emit("createTask");
+        setNewTaskTitle("");
+        setNewTaskDescription("");
       } catch (error) {
-        console.error("Error adding task:", error);
+        console.error("Error adding task", error);
       }
     }
   };
