@@ -1,6 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Box, Container, Grid, IconButton, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  Container,
+  Grid,
+  IconButton,
+  Paper,
+  Typography,
+} from "@mui/material";
 import {
   DragDropContext,
   Droppable,
@@ -11,12 +18,13 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Link from "next/link";
 import { Socket } from "socket.io-client";
+import { deleteTask, getTasks, updateTaskStatus } from "../api/task";
 
 interface Task {
   id: string;
   title: string;
   status: TaskStatus;
-  description: string
+  description: string;
 }
 
 type TaskStatus = "TODO" | "IN_PROGRESS" | "DONE";
@@ -33,11 +41,7 @@ const TaskContainer: React.FC<TaskContainerProps> = ({ socket }) => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_TASK_SERVICE_URL}/tasks`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch");
-        }
-        const tasksData: Task[] = await response.json();
+        const tasksData = await getTasks();
         setTasks(tasksData);
       } catch (error) {
         setError("Error fetching tasks");
@@ -72,22 +76,8 @@ const TaskContainer: React.FC<TaskContainerProps> = ({ socket }) => {
       return;
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_TASK_SERVICE_URL}/tasks/${draggableId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ status: destination.droppableId }),
-        }
-      );
-
+      const updatedTask = await updateTaskStatus(draggableId, destination.droppableId);
       socket.emit("updateTask");
-
-      if (!response.ok) {
-        throw new Error("Failed to update task");
-      }
     } catch (error) {
       console.log(error);
     }
@@ -95,14 +85,7 @@ const TaskContainer: React.FC<TaskContainerProps> = ({ socket }) => {
 
   const handleDeleteTask = async (taskId: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_TASK_SERVICE_URL}/tasks/${taskId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete");
-      }
-
+      await deleteTask(taskId);
       socket.emit("deleteTask");
     } catch (error) {
       console.error(error);
@@ -164,29 +147,28 @@ const TaskContainer: React.FC<TaskContainerProps> = ({ socket }) => {
                                 }}
                               >
                                 <Box>
-                                <Typography variant="subtitle1">
-                                  {task.title}
-                                </Typography>
-                                <Typography
-                                  variant="body2"
-                                  color="textSecondary"
-                                >
-                                  {task.description}{" "}
- 
-                                </Typography>
+                                  <Typography variant="subtitle1">
+                                    {task.title}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    color="textSecondary"
+                                  >
+                                    {task.description}{" "}
+                                  </Typography>
                                 </Box>
                                 <Box>
-                                <IconButton
-                                  onClick={() => handleDeleteTask(task.id)}
-                                  color="secondary"
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
-                                <Link href={`/${task.id}`}>
-                                  <IconButton>
-                                    <VisibilityIcon />
+                                  <IconButton
+                                    onClick={() => handleDeleteTask(task.id)}
+                                    color="secondary"
+                                  >
+                                    <DeleteIcon />
                                   </IconButton>
-                                </Link>
+                                  <Link href={`/${task.id}`}>
+                                    <IconButton>
+                                      <VisibilityIcon />
+                                    </IconButton>
+                                  </Link>
                                 </Box>
                               </Paper>
                             </div>

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import Redis from 'ioredis';
 
 @Injectable()
@@ -7,21 +7,33 @@ export class RedisService {
 
   constructor() {
     this.redis = new Redis({
-      host: 'localhost',
-      port: 6379,
+      host: process.env.REDIS_HOST,
+      port: Number(process.env.REDIS_PORT),
     });
   }
 
   async getTask(id: number): Promise<any> {
-    const task = await this.redis.get(`task:${id}`);
-    return task ? JSON.parse(task) : null;
+    try {
+      const task = await this.redis.get(`task:${id}`);
+      return task ? JSON.parse(task) : null;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
   async setTask(id: number, task: any): Promise<void> {
-    await this.redis.set(`task:${id}`, JSON.stringify(task));
+    try {
+      await this.redis.set(`task:${id}`, JSON.stringify(task));
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
   async deleteTask(id: number): Promise<void> {
-    await this.redis.del(`task:${id}`);
+    try {
+      await this.redis.del(`task:${id}`);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 }

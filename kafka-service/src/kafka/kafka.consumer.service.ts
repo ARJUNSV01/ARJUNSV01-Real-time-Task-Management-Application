@@ -13,7 +13,7 @@ export class KafkaConsumerService implements OnModuleInit {
   ) {
     const kafka = new Kafka({
       clientId: 'kafka-service',
-      brokers: ['localhost:9092'],
+      brokers: [process.env.KAFKA_BROKER],
     });
 
     this.consumer = kafka.consumer({ groupId: 'kafka-service-group' });
